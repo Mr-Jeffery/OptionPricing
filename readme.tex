@@ -1,0 +1,62 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\title{FD method in Differential Equations}
+\author{Mr-Jeffery}
+\date{August 2022}
+
+\begin{document}
+
+\maketitle
+
+\section{Finite Difference Method}
+Finite difference method is an important computational method to mind the numerical solution of a differential equation. The main idea in to set up an equidistant grid of nodes on the domain of integration $[\alpha,\beta]$, such that 
+$$x_i=\alpha+(i-1)*h\qquad(i=1,2,\cdot\cdot\cdot,n+1)$$ 
+in which  
+$h=\frac{(\beta-\alpha)}n$.
+
+Consider a boundary value problem of second order:
+$$u''+u' P(x)+u Q(x)=R(x)\\$$
+$$u(\alpha)=a$$
+$$u(\beta)=b$$
+The basic idea is to approximate the first and derivative at each point by
+$$u_i'=\frac{u_{u+1}-u_{i-1}}{2h}+O(h^2)$$
+and
+$$u_i''=\frac{u_{i+1}-2u_{i}+u_{i-1}}{h^2}+O(h^2)$$
+then the differential equation can be written as
+
+$$\frac{u_{i+1}-2u_{i}+u_{i-1}}{h^2}
+    +\frac{u_{i+1}-u_{i-1}}{2h} P(x_i)
+    +u_i Q(x_i)
+    =R(x_i)\qquad(2\le i\le n)$$
+$$u(x_1)=a$$
+$$u(x_{n+1})=b$$
+Then we can obtain the numerical solution by solving the linear equations above.
+
+\section{American Put Option}
+
+Shown by Black and Scholes (1973) and Merton (1973b), the partial differential equation governing the value of the option between dividend payment dates is
+$$\frac12 \sigma^2 S^2 P_{SS} + r S P_{S} - r P - P_\tau=0 \quad S_f(\tau)<S,\quad0<tau<\tau_{max}$$
+in which $\sigma^2$ is the instantaneous variance rate, P is the value of the American put option, $\tau$ is the remain time before expiration. According to Kim et al. (1990), the value of an American option at given time and price should be 
+$$\qquad V(\tau,S(\tau))=v(\tau,S(\tau))+r\int_0^{\tau}K e^{-r(\tau-u)}\Phi(-d_{-}(\tau-u,S/S(u)))\mathrm{d}u$$
+$$-q\int_0^{\tau}K e^{-q(\tau-u)}\Phi(-d_{+}(\tau-u,S/S(u)))\mathrm{d}u$$
+where $v(\tau,S)$ is the European option price which can be calculated directly through formula, and the integrals are the early exercise premium terms.
+The boundary condition of $S_f(\tau)$ is 
+$$\qquad K-S_f(\tau)=V(\tau,S_f(\tau))$$
+where the immediate payoff on the left hand side equals the value of the option.
+
+Because of the $S_f(\tau)$ and $\tau$ inside the integral, this equation has no analytical solution. Thus the early exercise boundary can only be obtained through numerical solution.
+
+In this research, we solve the equation by Richardson fixed point iteration by a universal grid $\{\tau_0,\tau_1,\cdot\cdot\cdot,\tau_{max}\}$, in which $\tau_0=0$ and $\tau_{max}$ is the longest maturity for which we shall need to recover the exercise boundary. With some mathematical technique , the equation can be converted into another form
+$$S_f(\tau_i)=K e^{(q-r)\tau_{i}} \frac{N(\tau_i,S_f)}{D(\tau_i,S_f)}$$
+where
+$$N(\tau,S_f)=\Phi(-d_{-}(\tau,S_f(\tau)/K)+r\int_0^{\tau} e^{r u}\Phi(-d_{-}(\tau-u,S_f(\tau)/S(u)))\mathrm{d}u$$
+$$D(\tau,S_f)=\Phi(-d_{+}(\tau,S_f(\tau)/K)+q\int_0^{\tau} e^{q u}\Phi(-d_{+}(\tau-u,S_f(\tau)/S(u)))\mathrm{d}u$$
+The iteration formula at $j$th time is given by
+$$S^{(j)}_f(\tau_i)=K e^{(q-r)\tau_{i}} \frac{N(\tau_i,S^{(j-1)}_f)}{D(\tau_i,S^{(j-1)}_f)}$$
+Like mentioned above, the equation has no analytical solution, thus the integration inside the iteration scheme is conducted numerically by using trapezoid approximation.
+$$\int_{\tau_{i-1}}^{\tau_{i}}f(u) \approx \frac{1}{2} (f(\tau_{i-1})+f(\tau_{i})) \Delta u$$
+After a few iteration, $S_f$ converges and we should be able to get a stable result.
+\section{Conclusion}
+The core idea of finite difference method is to consider the solution as a set of points instead of a continuous curve, then the whole system is transformed into a linear system, which can be solved by linear algebra.
+\end{document}
