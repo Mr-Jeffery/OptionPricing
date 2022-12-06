@@ -1,5 +1,5 @@
 function output = ODEsolver(alpha,K,a,b,n,r,sigmaP2,k,Slater,Wlater)
-% solver for boundary problem 
+% solver for boundary problem by finite element method
 % u'' + P(x)*u' + Q(x)*u = R(x)     (alpha<x<beta)
 % r1*u'(alpha)  + r2*u(alpha)   = r3
 % r4*u'(beta)   + r5*u(beta)    = r6
